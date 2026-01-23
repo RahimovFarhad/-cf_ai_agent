@@ -1,168 +1,157 @@
-# Phases (Cloudflare AI Agent Project)
+# ShieldFlow — Phases
 
-Project: **Project Assistant Agent**
-Core: Chat-based project manager with persistent backlog + GitHub issue sync.
-
----
-
-## Phase 0 — Project Definition (DONE)
-**Goal:** lock scope so build is demoable.
-
-### Deliverable
-- One demo flow:
-  1) describe project
-  2) generate backlog
-  3) change task status
-  4) sync to GitHub issues
-  5) refresh → memory persists
+A Cloudflare-native AI content moderation service (API + realtime dashboard) with per-customer isolation.
 
 ---
 
-## Phase 1 — Routing + Agent Instance Selection (DONE)
-**Goal:** requests route to a specific agent instance (per session/user).
+## Phase 0 — Scope + Demo Script
+**Goal:** lock MVP and avoid scope creep.
 
-### Requirements
-- Worker routes `/api/agent` → correct Agent instance using `sessionId`
-- Agent responds to HTTP requests via `onRequest`
+**Demo flow (target):**
+1) Use a customer identifier (temporary) to isolate state
+2) `POST /moderate` returns `{decision, score, reasons}`
+3) Dashboard shows live events + stats
+4) Refresh dashboard → state persists
+5) Add API keys (KV) + revoke/rotate
+6) Swap placeholder scoring → Workers AI (Llama)
 
-### Acceptance Criteria
-- `curl /api/agent` with a session id returns JSON from agent
-- missing session id returns 401 (or similar)
-- different session ids route to different agent instances (to be proven once state exists)
-
-### Status
-✅ Completed (curl test confirmed)
-
----
-
-## Phase 2 — Realtime Transport (WebSocket) + JSON Protocol
-**Goal:** support live chat / realtime UI.
-
-### Requirements
-- Pages (or minimal frontend) opens WebSocket to `/api/agent?session=...`
-- WebSocket messages use JSON protocol (no raw strings)
-- Agent can parse, validate, and respond
-
-### Message Protocol (minimum)
-Client → Agent:
-- `{ "type": "chat", "text": "..." }`
-- `{ "type": "command", "name": "...", "args": {...} }`
-
-Agent → Client:
-- `{ "type": "assistant", "text": "..." }`
-- `{ "type": "status", "text": "..." }`
-- `{ "type": "error", "text": "..." }`
-
-### Acceptance Criteria
-- WS connect works
-- send `{type:"chat"}` → agent replies `{type:"assistant"}`
-- invalid JSON triggers `{type:"error"}` not crash
-
-### Status
-✅ Completed (websocket connection tested)
----
-
-## Phase 3 — State Model + Persistence
-**Goal:** agent becomes a real stateful backend.
-
-### Requirements
-Agent state includes:
-- `projectSummary`
-- `stack[]`
-- `tasks[]` (id, title, status, priority, tags, acceptance criteria)
-- `updatedAt`
-- optional: `decisions[]`
-
-Persist state (Durable Objects / Agents state storage)
-
-### Acceptance Criteria
-- “create backlog” results in tasks stored
-- refresh page → tasks still exist
-- state can be retrieved via an HTTP endpoint or WS push
-- agent broadcasts updated state after changes
+**Exit criteria**
+- You can describe the demo in < 2 minutes.
 
 ---
 
-## Phase 4 — LLM Integration (Rubric #1)
-**Goal:** LLM drives app behavior (not chat wrapper).
+## Phase 1 — Routing + Customer Isolation
+**Goal:** route requests to a per-customer Durable Object (Agent).
 
-### Requirements
-- Workers AI Llama model (or external LLM)
-- LLM produces **structured outputs** (tool calls / JSON actions)
-- agent executes actions safely (validation)
+**Work**
+- Worker routes these paths to the Agent:
+  - `POST /moderate`
+  - `GET /state`
+  - `GET /ws` (later)
+- Customer selection (temporary):
+  - `X-Customer-Id` header OR `?customer=...`
+- DO selection:
+  - `idFromName(customerId)` / `getAgentByName(..., customerId)`
 
-### Tools (minimum)
-- `set_project(summary, stack)`
-- `create_task(title, priority, tags)`
-- `move_task(taskId, status)`
-
-### Acceptance Criteria
-- natural language input changes state (tasks) via LLM actions
-- tool validation prevents nonsense updates
-
----
-
-## Phase 5 — Workflow / Coordination (Rubric #2)
-**Goal:** implement multi-step orchestration and state coordination.
-
-### Requirements
-At least one multi-step operation such as:
-- generate backlog pipeline (extract → propose tasks → store)
-- “sync to github” pipeline (loop tasks → create issues → save mapping)
-- progress events streamed during multi-step work
-
-### Coordination Guarantees
-- idempotency: repeated sync does not duplicate issues
-- ordering: updates happen consistently per project/session
-
-### Acceptance Criteria
-- multi-step workflow executes
-- state reflects intermediate + final steps
-- duplicate calls do not cause duplicates
+**Exit criteria**
+- Two different customers have separate DO state.
 
 ---
 
-## Phase 6 — GitHub OAuth + Issue Sync
-**Goal:** integrate with real external API to prove tool + workflow capability.
+## Phase 2 — Moderation API + Persisted State (No Auth, No LLM Yet)
+**Goal:** end-to-end pipeline works and state persists.
 
-### Requirements
-- GitHub OAuth App
-- `/auth/github/start`
-- `/auth/github/callback`
-- store token server-side, linked to session/user
-- select repo (manual input is fine initially)
+**Work**
+- Define API contract:
+  - Request: `{ text, userId?, contentId?, metadata? }`
+  - Response: `{ decision, score, reasons, requestId, timestamp }`
+- Implement placeholder moderation rules (deterministic)
+- DO stores per-customer state:
+  - `stats`: total / allow / flag / reject
+  - `recentLogs`: ring buffer last N (store preview, not full text)
+  - `settings`: thresholds
 
-### GitHub Actions
-- create issue
-- optionally: comment / label
-
-### Acceptance Criteria
-- user can connect GitHub
-- agent creates GitHub issues for tasks
-- tasks store mapping `taskId → issueUrl/issueNumber`
-- UI shows clickable GitHub issue links
+**Exit criteria**
+- `POST /moderate` updates stats/logs
+- `GET /state` returns persisted stats/logs (survives refresh)
 
 ---
 
-## Phase 7 — UI + Demo Polish
-**Goal:** make it obviously “agentic + stateful”, not a wrapper.
+## Phase 3 — Realtime Dashboard Transport (WebSocket)
+**Goal:** live streaming of moderation events.
 
-### Requirements
-- simple Kanban view (Backlog / In Progress / Done)
-- “Sync to GitHub” button
-- status indicators + progress messages
-- memory indicator (loaded X tasks)
+**Work**
+- Implement `GET /ws` WebSocket upgrade routed to customer DO
+- DO broadcasts on each moderation:
+  - new log entry
+  - updated stats
+- Pages UI connects and renders:
+  - live feed
+  - stats cards
+  - raw JSON panel
 
-### Acceptance Criteria
-- clean 90-second demo possible
-- refresh demonstrates persistence
-- repo looks professional (README + setup instructions)
+**Exit criteria**
+- Submitting moderation requests updates dashboard live without refresh.
 
 ---
 
-## Final Submission Checklist
-- [ ] README: how to run + demo steps
-- [ ] Architecture diagram (optional but strong)
-- [ ] rubic mapping section: “LLM / Coordination / Input / Memory”
-- [ ] GitHub OAuth documented
-- [ ] no secrets committed
+## Phase 4 — API Key Auth (KV Registry)
+**Goal:** production-ish auth and customer mapping without a DB.
+
+**Work**
+- Use KV for key registry + customer config:
+  - `key:<hmac(apiKey)> -> { customerId, status, keyPrefix }`
+  - `customer:<customerId> -> { name, allowedOrigins[], thresholds{} }`
+- Worker auth:
+  - `Authorization: Bearer <apiKey>` → HMAC → KV lookup → customerId
+- Admin endpoints (protected by `ADMIN_TOKEN` secret):
+  - create customer
+  - mint key
+  - revoke key
+
+**Exit criteria**
+- Invalid/revoked keys rejected
+- Valid keys route to correct customer DO
+
+---
+
+## Phase 5 — Workers AI (Llama) Moderation (Rubric: LLM)
+**Goal:** LLM drives decisions via structured output.
+
+**Work**
+- Call Workers AI model from DO
+- Enforce JSON schema output:
+  - `toxicityScore`, `categories[]`, `confidence`, `shortRationale`
+- Policy mapping:
+  - score + categories + thresholds → Allow/Flag/Reject
+- Strict validation + safe fallback
+
+**Exit criteria**
+- `/moderate` uses Workers AI and returns consistent structured data.
+
+---
+
+## Phase 6 — Workflow/Coordination Hardening (Rubric: Coordination)
+**Goal:** multi-step decision pipeline with correctness properties.
+
+**Work**
+- Rate limiting per customer in DO (no races)
+- Idempotency using `contentId`:
+  - repeated calls return stored result, don’t double-log
+- Progress/status events (optional) for UI
+
+**Exit criteria**
+- Concurrency doesn’t corrupt stats/log order
+- Retries don’t duplicate issues/logs
+
+---
+
+## Phase 7 — Configuration Surface + “Explain” Queries
+**Goal:** make it feel like a real service, not just an endpoint.
+
+**Work**
+- Config endpoints (auth required):
+  - update thresholds/categories
+  - allowed origins
+- Optional: “explain this decision” / “why are flags spiking?”
+  - queries state + LLM summarization
+
+**Exit criteria**
+- Config changes affect live moderation behavior and persist.
+
+---
+
+## Phase 8 — Polish + Submission
+**Goal:** strong demo + clear documentation.
+
+**Work**
+- README (setup, endpoints, demo steps)
+- Rubric mapping section: LLM / coordination / input / memory
+- Basic architecture diagram
+- Error codes, limits, safe logging (no API keys)
+
+**Exit criteria**
+- Clean 90–120s demo
+- Repo looks production-minded (no secrets, stable endpoints)
+
+---
