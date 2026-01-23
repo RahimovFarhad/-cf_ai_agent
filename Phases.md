@@ -58,6 +58,8 @@ Agent → Client:
 - send `{type:"chat"}` → agent replies `{type:"assistant"}`
 - invalid JSON triggers `{type:"error"}` not crash
 
+### Status
+✅ Completed (websocket connection tested)
 ---
 
 ## Phase 3 — State Model + Persistence
