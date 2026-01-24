@@ -97,9 +97,9 @@ A Cloudflare-native AI content moderation service (API + realtime dashboard) wit
 **Work**
 - Call Workers AI model from DO
 - Enforce JSON schema output:
-  - `toxicityScore`, `categories[]`, `confidence`, `shortRationale`
+  - `score`, `categories[]`, `briefReasons[]`
 - Policy mapping:
-  - score + categories + thresholds → Allow/Flag/Reject
+  - score → Allow/Flag/Reject
 - Strict validation + safe fallback
 
 **Exit criteria**

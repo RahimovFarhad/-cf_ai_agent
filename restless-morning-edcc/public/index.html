@@ -866,7 +866,7 @@
                         'Authorization': `Bearer ${currentApiKey}`
                     },
                     body: JSON.stringify({
-                        text: `${title}. ${content}`,
+                        text: `title: ${title}. content: ${content}`,
                         userId: author,
                         metadata: { postId: post.id }
                     })

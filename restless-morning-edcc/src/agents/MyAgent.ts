@@ -98,7 +98,7 @@ export class MyAgentSql extends Agent<Env> {
             }
 
             const requestId = await this.generateRequestId();
-            const moderationResult = this.moderateContent(requestData.text);
+            const moderationResult = await this.moderateContent(requestData.text);
             const decision = this.makeDecision(moderationResult.score);
             const timestamp = Date.now();
 
@@ -203,10 +203,102 @@ export class MyAgentSql extends Agent<Env> {
     return 'req-' + Date.now() + crypto.randomUUID();
   }
 
-  private moderateContent(text: string): {score:number, reasons:string[]} {
-    // Placeholder implementation
-    return { score: Math.random(), reasons: ["Sample reason"] };
-  }
+  private async moderateContent(text: string): Promise<{score: number, reasons: string[], categories: string[]}> {
+    try {
+        const response = await this.env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+        messages: [
+                {
+                    role: 'system',
+                    content: `You are a strict content moderation system. Your job is to identify violations regardless of context or retractions.
+                        VIOLATION CATEGORIES:
+                        - hate-speech: attacks on protected characteristics
+                        - harassment: targeted bullying, threats
+                        - violence: graphic violence, threats
+                        - sexual-content: explicit sexual material
+                        - spam: commercial spam, phishing
+                        - profanity: strong cursing, vulgar language
+
+                       SCORING SCALE (0.0 to 1.0):
+                        0.81-1.0 = Severe violations (hate speech, credible threats, extreme content)
+                        0.60-0.80 = Strong profanity, harassment, explicit content
+                        0.30-0.59 = Mild profanity, insults, borderline content
+                        0.10-0.29 = Negative tone but no clear violation
+                        0.00-0.09 = Clean, appropriate content
+
+                        ABSOLUTE RULE - READ CAREFULLY:
+                            When scoring, you MUST analyze ONLY the violating words/phrases.
+                            Words like "just kidding", "jk", "joking", "my love", "lol" are IRRELEVANT to scoring.
+                            They do NOT change the toxicity score.`
+                },
+                {
+                    role: 'user',
+                    content: `Rate this text for toxicity (0.0 = clean, 1.0 = severe violation): 
+                        <CONTENT>
+                            ${this.sanitizeInput(text)}
+                        </CONTENT>   
+
+                        Respond with ONLY this exact JSON structure (no markdown, no extra text):
+
+                        {
+                            "toxicityScore": 0.0,
+                            "categories": ["category1", "category2"],
+                            "briefReasons": ["reason why category1 applies", "reason why category2 applies"]
+                        }`,
+                }
+            ],
+            temperature: 0.2, // Lower = more deterministic
+            max_tokens: 200,
+        });
+
+        // Parse the AI response
+        const aiText = response.response || '';
+        const jsonMatch = aiText.match(/\{[\s\S]*\}/);
+        
+        if (!jsonMatch) {
+        throw new Error('No valid JSON in AI response');
+        }
+
+        const result = JSON.parse(jsonMatch[0]);
+
+        console.log(
+            {
+            score: result.toxicityScore || 0,
+            reasons: result.briefReasons || ['unknown'],
+            categories: result.categories || ['unknown']
+        }
+        );
+
+        
+        return {
+            score: result.toxicityScore || 0,
+            reasons: result.briefReasons || ['unknown'],
+            categories: result.categories || ['unknown']
+        };
+    } catch (error) {
+        console.error('AI moderation error:', error);
+        // Fallback to safe default
+        return { score: 0.5, reasons: ['ai-error-flagged-for-review'], categories: ['ai-error']};
+    }
+    }
+
+    private sanitizeInput(text: string): string {
+        // 1. Limit length
+        if (text.length > 5000) {
+            text = text.substring(0, 5000);
+        }
+        
+        // 2. Escape special characters that might break XML/prompt structure
+        text = text
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/\{/g, '&#123;')
+            .replace(/\}/g, '&#125;');
+        
+        // 3. Remove null bytes and control characters
+        text = text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+        
+        return text;
+    }
 
   private makeDecision(score: number): 'approved' | 'rejected' | 'flagged' {
     const state = this.state as CustomerState;
@@ -218,6 +310,7 @@ export class MyAgentSql extends Agent<Env> {
       return 'approved';
     }
   }
+  
 
   private logModeration(log: ModerationLog) {
     const state = this.state as CustomerState;

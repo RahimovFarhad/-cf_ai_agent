@@ -192,7 +192,4 @@
             async onClose(connection: Connection)
     Ignore unnecessary details, make an in-depth search on StackOverflow, Cloudflare Documentation, and Cloudflare developer forums. If you find a direct reason, say it. If there are multiple reasons, or there is ambiguity, then list top 3 reasons, and how they can be solved. 
 
-
-    
-     
-    
+6) I am using llama-3.1-8b-instruct model on Cloudflare Workers AI, and to parse the user text to it and ask for moderation. I have a security concern: How to avoid prompt injection by a malicious user? Show me an easy-to-implement yet a secure approach. 
