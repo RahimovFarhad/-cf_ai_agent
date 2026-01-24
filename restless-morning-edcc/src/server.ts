@@ -16,15 +16,55 @@ async function resolveCustomerIdFromApiKey(env: Env, apiKey: string): Promise<st
   return rec.customerId;
 }
 
+async function createApiKey(env: Env, customerId: string) {
+  // Generate a random API key
+  const apiKey = "demo-" + crypto.randomUUID(); // or use a more sophisticated generator
+  
+  // Hash it
+  const hash = await hmacHex(apiKey, env.API_KEY_HMAC_SECRET);
+  
+  // Store in KV
+  await env.SHIELDFLOW_KV.put(
+    `key:${hash}`,
+    JSON.stringify({
+      customerId,
+      status: "active",
+      createdAt: new Date().toISOString()
+    })
+  );
+  
+  // Return the plaintext key (ONLY TIME IT'S VISIBLE)
+  return apiKey;
+}
+
 
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext) {
     const url = new URL(request.url);
 
-    const endpoints = ["/api/agent", "/moderate", "/ws", "/state"];
+    const endpoints = ["/api/agent", "/moderate", "/ws", "/state", "/demo/generate-apiKey"];
 
     if (!endpoints.includes(url.pathname)) {
       return new Response("Not found", { status: 404 });
+    }
+
+    if (url.pathname === "/demo/generate-apiKey"){
+      const cid: string | null = request.headers.get("Demo-Customer-Id");
+      if (!cid) {
+        return new Response(JSON.stringify({ error: "Demo-Customer-Id header required" }), { 
+          status: 401,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+      const demoKey = await createApiKey(env, cid);
+      return new Response(JSON.stringify({ 
+          demoKey, 
+          customerId: cid,
+          message: "Store this key securely - it won't be shown again"
+        }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+      });
     }
 
     var apiKey: string | null;

@@ -125,9 +125,6 @@ export class MyAgent extends Agent<Env> {
 
             });
         }
-
-        
-      
     }
     else if (url.pathname === "/api/agent") {
       return new Response("Agent API endpoint hit", { status: 200 });

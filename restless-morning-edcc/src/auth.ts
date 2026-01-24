@@ -17,3 +17,4 @@ export function readBearer(req: Request): string | null {
   const m = h.match(/^Bearer\s+(.+)$/i);
   return m ? m[1].trim() : null;
 }
+
