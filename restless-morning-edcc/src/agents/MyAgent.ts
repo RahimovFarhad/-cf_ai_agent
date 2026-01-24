@@ -1,6 +1,8 @@
 import { Agent, type Connection, type WSMessage } from "agents";
 
 export interface Env extends Cloudflare.Env{
+    SHIELDFLOW_KV: KVNamespace;
+    API_KEY_HMAC_SECRET: string;
     MyAgent: DurableObjectNamespace<MyAgent>;
     AI: any;
 }

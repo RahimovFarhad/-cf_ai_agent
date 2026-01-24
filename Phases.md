@@ -84,10 +84,6 @@ A Cloudflare-native AI content moderation service (API + realtime dashboard) wit
   - `customer:<customerId> -> { name, allowedOrigins[], thresholds{} }`
 - Worker auth:
   - `Authorization: Bearer <apiKey>` → HMAC → KV lookup → customerId
-- Admin endpoints (protected by `ADMIN_TOKEN` secret):
-  - create customer
-  - mint key
-  - revoke key
 
 **Exit criteria**
 - Invalid/revoked keys rejected

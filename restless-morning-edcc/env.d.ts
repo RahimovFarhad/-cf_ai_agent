@@ -6,6 +6,8 @@ declare namespace Cloudflare {
 		durableNamespaces: "Chat";
 	}
 	interface Env {
+    HMAC_SECRET: string;
+    SHIELFLOW_KV: any;
 		OPENAI_API_KEY: string;
 		Chat: DurableObjectNamespace<import("./src/server").Chat>;
 		AI: Ai;
