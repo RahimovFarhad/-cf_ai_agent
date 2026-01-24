@@ -1,19 +1,23 @@
 import { getAgentByName } from 'agents';
-import { MyAgent, type Env } from './agents/MyAgent';
+import { MyAgentSql, type Env } from './agents/MyAgent';
 import { hmacHex, readBearer } from './auth';
 
 async function resolveCustomerIdFromApiKey(env: Env, apiKey: string): Promise<string | null> {
   const hash = await hmacHex(apiKey, env.API_KEY_HMAC_SECRET);
 
   type KeyRecord = {customerId: string; status: "active" | "disabled"};
-  console.log(apiKey, hash);
   const rec = await env.SHIELDFLOW_KV.get("key:"+hash, "json") as KeyRecord | null;
-  console.log(rec)
+
   if (!rec || rec.status !== "active") {
     return null;
   }
+  var id = rec.customerId;
+
+  if (id){
+    id = id.trim().toLowerCase();
+  }
   
-  return rec.customerId;
+  return id;
 }
 
 async function createApiKey(env: Env, customerId: string) {
@@ -37,6 +41,17 @@ async function createApiKey(env: Env, customerId: string) {
   return apiKey;
 }
 
+function readWsApiKey(request: Request): string | null {
+  const proto = request.headers.get("Sec-WebSocket-Protocol");
+  if (!proto) return null;
+
+  // If multiple are present, pick the one we recognize
+  const parts = proto.split(",").map(s => s.trim());
+  const bearer = parts.find(p => p.startsWith("bearer."));
+  return bearer ? bearer.slice("bearer.".length) : null;
+}
+
+
 
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext) {
@@ -49,7 +64,8 @@ export default {
     }
 
     if (url.pathname === "/demo/generate-apiKey"){
-      const cid: string | null = request.headers.get("Demo-Customer-Id");
+      const body = await request.json() as any;
+      const cid: string | null = body["Demo-Customer-Id"] ?? null;
       if (!cid) {
         return new Response(JSON.stringify({ error: "Demo-Customer-Id header required" }), { 
           status: 401,
@@ -67,27 +83,25 @@ export default {
       });
     }
 
-    var apiKey: string | null;
-    if (url.pathname === "/ws") {
-      // Extract API key from Sec-WebSocket-Protocol header
-      const protocols = request.headers.get('Sec-WebSocket-Protocol');
-      apiKey = protocols?.split(',').map(p => p.trim())[1] as string | null; // Second value
-    } else {
-      apiKey = readBearer(request);
-    }
+    const apiKey = url.pathname === "/ws" ? readWsApiKey(request) : readBearer(request);
+
     if (!apiKey) {
         return new Response("Unauthorized", { status: 401 });
     }
 
     const customerId = await resolveCustomerIdFromApiKey(env, apiKey);
-
+    
+    
     if (!customerId) {
       return new Response("Unauthorized", { status: 401 });
     }
-
+    
+    console.log("route", url.pathname, "customerId=", customerId);
     const agent = await getAgentByName(env.MyAgent, customerId);
+
     return agent.fetch(request);
   }
 } satisfies ExportedHandler<Env>;
 
-export { MyAgent };
+export { MyAgentSql };
+export {MyAgentSql as Chat}

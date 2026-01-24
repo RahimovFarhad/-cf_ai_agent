@@ -3,9 +3,10 @@ import { Agent, type Connection, type WSMessage } from "agents";
 export interface Env extends Cloudflare.Env{
     SHIELDFLOW_KV: KVNamespace;
     API_KEY_HMAC_SECRET: string;
-    MyAgent: DurableObjectNamespace<MyAgent>;
+    MyAgent: DurableObjectNamespace<MyAgentSql>;
     AI: any;
 }
+
 
 // Message types matching the frontend
 const MessageType = {
@@ -72,9 +73,20 @@ interface CustomerState {
   aiContext: chatMessage[] // Chats with Agent by the admin
 }
 
-export class MyAgent extends Agent<Env> {
+export class MyAgentSql extends Agent<Env> {
+  constructor(ctx: DurableObjectState, env: Env) {
+    super(ctx, env);
+    
+    // Block all requests until initialization completes
+    this.ctx.blockConcurrencyWhile(async () => {
+      await this.initialize();
+    });
+  }
+  
   async onRequest(req: Request): Promise<Response> {
     const url = new URL(req.url);
+    console.log("DO instance id:", this.ctx.id.toString(), "path:", new URL(req.url).pathname);
+
     if (url.pathname === "/moderate" && req.method === "POST") {
         if (!this.state) await this.initialize();
 

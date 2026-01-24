@@ -21,15 +21,15 @@
 		"bindings": [
 			{
 				"name": "MyAgent",
-				"class_name": "MyAgent"
+				"class_name": "MyAgentSql"
 			}
 		]
 	},
 	"migrations": [
 		{
-			"tag": "v1",
+			"tag": "v2",
 			"new_sqlite_classes": [
-				"MyAgent"
+				"MyAgentSql"
 			]
 		}
 	],
@@ -39,7 +39,8 @@
 	"kv_namespaces": [
 		{
 			"binding": "SHIELDFLOW_KV",
-			"id": "589fd572d0c04ec89bff2942a753850e"
+			"id": "589fd572d0c04ec89bff2942a753850e",
+			"preview_id": "33ce0a13399941cba2ffa9a86073312e"
 		}
 	]
 	/**
