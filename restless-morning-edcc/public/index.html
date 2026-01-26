@@ -776,6 +776,9 @@
                 case 'assistant':
                     addChatMessage(message.text, 'assistant');
                     break;
+                case 'query_status':
+                    addChatMessage(message.text, 'query_status');
+                    break;
                 case 'error':
                     console.error('Agent error:', message.text);
                     addChatMessage('Error: ' + message.text, 'assistant');
@@ -937,6 +940,10 @@
             
             const messageEl = document.createElement('div');
             messageEl.className = `chat-message ${role}`;
+            if (role === 'query_status') {
+                messageEl.style.fontStyle = 'italic';
+                messageEl.style.background = 'rgba(255, 255, 255, 0.05)';
+            }
             messageEl.textContent = text;
             messagesDiv.appendChild(messageEl);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;

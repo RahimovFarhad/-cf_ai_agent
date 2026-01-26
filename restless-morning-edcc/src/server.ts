@@ -51,55 +51,105 @@ function readWsApiKey(request: Request): string | null {
   return bearer ? bearer.slice("bearer.".length) : null;
 }
 
+const ALLOWED_ORIGINS = new Set([
+  "http://localhost:5173",
+  // add your Pages dev/prod domains:
+  // "https://your-site.pages.dev",
+  // "https://yourcustomdomain.com",
+]);
+
+function corsHeaders(origin: string | null) {
+  const allowOrigin = origin && ALLOWED_ORIGINS.has(origin) ? origin : ""; // empty = not allowed
+
+  return {
+    ...(allowOrigin ? { "Access-Control-Allow-Origin": allowOrigin } : {}),
+    "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Customer-Id",
+    "Access-Control-Max-Age": "86400",
+    // Only set this if you use cookies/credentials:
+    // "Access-Control-Allow-Credentials": "true",
+    "Vary": "Origin",
+  };
+}
+
+function withCors(req: Request, res: Response) {
+  const origin = req.headers.get("Origin");
+  const headers = new Headers(res.headers);
+
+  for (const [k, v] of Object.entries(corsHeaders(origin))) {
+    if (v !== "") headers.set(k, v);
+  }
+
+  return new Response(res.body, { status: res.status, headers });
+}
+
+function handleOptions(req: Request) {
+  const origin = req.headers.get("Origin");
+  if (!origin || !ALLOWED_ORIGINS.has(origin)) {
+    return new Response("CORS origin not allowed", { status: 403 });
+  }
+  return new Response(null, { status: 204, headers: corsHeaders(origin) });
+}
+
+
 
 
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext) {
+    if (request.method === "OPTIONS") return handleOptions(request);
+
     const url = new URL(request.url);
 
     const endpoints = ["/api/agent", "/moderate", "/ws", "/state", "/demo/generate-apiKey"];
 
     if (!endpoints.includes(url.pathname)) {
-      return new Response("Not found", { status: 404 });
+      return withCors(request, new Response("Not found", { status: 404 }));
     }
 
     if (url.pathname === "/demo/generate-apiKey"){
       const body = await request.json() as any;
       const cid: string | null = body["Demo-Customer-Id"] ?? null;
       if (!cid) {
-        return new Response(JSON.stringify({ error: "Demo-Customer-Id header required" }), { 
-          status: 401,
-          headers: { "Content-Type": "application/json" }
-        });
+        return withCors(request,
+          new Response(JSON.stringify({ error: "Demo-Customer-Id header required" }), { 
+            status: 401,
+            headers: { "Content-Type": "application/json" }
+          })
+        );
       }
       const demoKey = await createApiKey(env, cid);
-      return new Response(JSON.stringify({ 
-          demoKey, 
-          customerId: cid,
-          message: "Store this key securely - it won't be shown again"
-        }), {
-          status: 200,
-          headers: { "Content-Type": "application/json" }
-      });
+      return withCors(request,
+        new Response(JSON.stringify({ 
+            demoKey, 
+            customerId: cid,
+            message: "Store this key securely - it won't be shown again"
+          }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" }
+        })
+      );
     }
 
     const apiKey = url.pathname === "/ws" ? readWsApiKey(request) : readBearer(request);
 
     if (!apiKey) {
-        return new Response("Unauthorized", { status: 401 });
+        return withCors(request, new Response("Unauthorized", { status: 401 }));
     }
 
     const customerId = await resolveCustomerIdFromApiKey(env, apiKey);
     
     
     if (!customerId) {
-      return new Response("Unauthorized", { status: 401 });
+      return withCors(request, new Response("Unauthorized", { status: 401 }));
     }
     
     console.log("route", url.pathname, "customerId=", customerId);
     const agent = await getAgentByName(env.MyAgent, customerId);
 
-    return agent.fetch(request);
+    const res = await agent.fetch(request);
+
+    return url.pathname === "/ws" ? res : withCors(request, res);
+
   }
 } satisfies ExportedHandler<Env>;
 

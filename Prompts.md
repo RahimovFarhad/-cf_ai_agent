@@ -193,3 +193,22 @@
     Ignore unnecessary details, make an in-depth search on StackOverflow, Cloudflare Documentation, and Cloudflare developer forums. If you find a direct reason, say it. If there are multiple reasons, or there is ambiguity, then list top 3 reasons, and how they can be solved. 
 
 6) I am using llama-3.1-8b-instruct model on Cloudflare Workers AI, and to parse the user text to it and ask for moderation. I have a security concern: How to avoid prompt injection by a malicious user? Show me an easy-to-implement yet a secure approach. 
+
+7) I am on Phase 5 now, and I want to enable admin to chat with the agent. Here is the flow:
+    admin (client-side) input -> server -> llama ai (now ai should determine which helper method it needs to answer) -> server (based on the answer ai returns, server picks the helper method to send the data to ai) -> llama (answers the user question based on the data by the helper method) -> server -> admin
+
+    Help me to generate useful helper methods based on agent's memory:
+
+    interface CustomerState {
+        moderationLogs: ModerationLog[]; // Array to store moderation logs
+        stats: Stats; // Statistics for the customer
+        settings: {   
+            autoRejectThreshold: number;
+            flagThreshold: number;
+            allowThreshold: number;
+            logLimit: number; // Optional limit on number of logs to store
+        };
+        aiContext: chatMessage[] // Chats with Agent by the admin
+    }
+
+8) Sometimes AI model used to select the tools to use hallucinates. Make me a sanitizeToolSelectionResponse method to avoid parsing wrong params or functions. 
