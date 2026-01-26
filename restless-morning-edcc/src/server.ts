@@ -42,17 +42,13 @@ async function createApiKey(env: Env, customerId: string) {
 }
 
 function readWsApiKey(request: Request): string | null {
-  const proto = request.headers.get("Sec-WebSocket-Protocol");
-  if (!proto) return null;
-
-  // If multiple are present, pick the one we recognize
-  const parts = proto.split(",").map(s => s.trim());
-  const bearer = parts.find(p => p.startsWith("bearer."));
-  return bearer ? bearer.slice("bearer.".length) : null;
+  return new URL(request.url).searchParams.get("apiKey");
 }
+
 
 const ALLOWED_ORIGINS = new Set([
   "http://localhost:5173",
+  "https://cf-ai-agent-frontend.pages.dev"
   // add your Pages dev/prod domains:
   // "https://your-site.pages.dev",
   // "https://yourcustomdomain.com",

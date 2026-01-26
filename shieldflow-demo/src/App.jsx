@@ -317,8 +317,10 @@ function DemoPage({ apiKey, customerId, onBack }) {
       .catch(err => console.error('Failed to load state:', err));
 
     // Connect WebSocket
-    const wsUrl = `wss://restless-morning-edcc.farhad-r2006.workers.dev/ws`;
-    const socket = new WebSocket(wsUrl, [`bearer.${apiKey}`]);
+    const wsUrl =
+      `wss://restless-morning-edcc.farhad-r2006.workers.dev/ws?apiKey=${encodeURIComponent(apiKey)}`;
+    const socket = new WebSocket(wsUrl);
+
 
     socket.onopen = () => {
       setConnected(true);
