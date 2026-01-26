@@ -112,8 +112,9 @@ Streams moderation events and stats updates in real-time.
 | **Workers AI** | Llama 3.1 | LLM-based toxicity analysis |
 | **Durable Objects** | Stateful coordination | Per-customer isolation & persistence |
 | **WebSockets** | Real-time transport | Live dashboard updates |
-| **KV** | Key-value store | API key registry & customer config |
+| **KV** | KV Namespaces | API key registry & customer config |
 | **Pages** | Static hosting | Frontend dashboard |
+| **Memory**| DO state | Instance specific memory |
 
 ---
 
