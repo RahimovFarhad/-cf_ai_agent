@@ -563,6 +563,9 @@ export class MyAgentSql extends Agent<Env> {
             default:
                 toolResult = this.getFullContext();
         }
+        if (toolResult?.timestamp){
+            toolResult.timestamp = new Date(toolResult.timestamp).toISOString();
+        }
         return toolResult;
 
     }

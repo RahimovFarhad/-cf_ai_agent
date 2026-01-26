@@ -48,7 +48,7 @@ function readWsApiKey(request: Request): string | null {
 
 const ALLOWED_ORIGINS = new Set([
   "http://localhost:5173",
-  "https://cf-ai-agent-frontend.pages.dev"
+  "https://cf-ai-agent-f41.pages.dev"
   // add your Pages dev/prod domains:
   // "https://your-site.pages.dev",
   // "https://yourcustomdomain.com",

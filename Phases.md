@@ -107,37 +107,7 @@ A Cloudflare-native AI content moderation service (API + realtime dashboard) wit
 
 ---
 
-## Phase 6 — Workflow/Coordination Hardening (Rubric: Coordination)
-**Goal:** multi-step decision pipeline with correctness properties.
-
-**Work**
-- Rate limiting per customer in DO (no races)
-- Idempotency using `contentId`:
-  - repeated calls return stored result, don’t double-log
-- Progress/status events (optional) for UI
-
-**Exit criteria**
-- Concurrency doesn’t corrupt stats/log order
-- Retries don’t duplicate issues/logs
-
----
-
-## Phase 7 — Configuration Surface + “Explain” Queries
-**Goal:** make it feel like a real service, not just an endpoint.
-
-**Work**
-- Config endpoints (auth required):
-  - update thresholds/categories
-  - allowed origins
-- Optional: “explain this decision” / “why are flags spiking?”
-  - queries state + LLM summarization
-
-**Exit criteria**
-- Config changes affect live moderation behavior and persist.
-
----
-
-## Phase 8 — Polish + Submission
+## Phase 6 — Polish + Submission
 **Goal:** strong demo + clear documentation.
 
 **Work**

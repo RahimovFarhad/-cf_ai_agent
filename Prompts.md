@@ -212,3 +212,5 @@
     }
 
 8) Sometimes AI model used to select the tools to use hallucinates. Make me a sanitizeToolSelectionResponse method to avoid parsing wrong params or functions. 
+
+9) Given my index.html, make me a professional and simple react (vite) + tailwind website showcasing the same features with my index.html, but with a better design. The website should open with a landing page. Landing page needs to have a hero which takes full screen height, and shows title, gives a small explanation about the project, and should have 2 buttons: Launch Live Demo and How It Works. How It works section should have 3 cards: 1-Integrate API, 2-AI Analysis, 3-Get Results. And lastly, include a section to briefly write which features of I have used, mainly from Cloudflare. 

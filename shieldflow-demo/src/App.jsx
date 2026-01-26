@@ -6,7 +6,7 @@ const API_BASE = 'https://restless-morning-edcc.farhad-r2006.workers.dev';
 function App() {
   const [currentView, setCurrentView] = useState('landing'); // 'landing' or 'demo'
   const [apiKey, setApiKey] = useState(null);
-  const [customerId, setCustomerId] = useState('demo-customer');
+  const [customerId, setCustomerId] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
   return (
@@ -53,112 +53,97 @@ function LandingPage({ onStartDemo }) {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-purple-700 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-10"></div>
+      <div className="relative bg-slate-900 text-white h-screen flex flex-col overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+        <div className="absolute top-20 right-20 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-cyan-600/20 rounded-full blur-3xl"></div>
         
-        <nav className="relative z-10 container mx-auto px-6 py-6">
+        <nav className="relative z-10 container mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-2xl font-bold">
-              <Shield className="w-8 h-8" />
+              <Shield className="w-8 h-8 text-blue-400" />
               ShieldFlow
             </div>
             <button
               onClick={onStartDemo}
-              className="bg-white text-indigo-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
+              className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-500 transition-all"
             >
               Try Demo
             </button>
           </div>
         </nav>
 
-        <div className="relative z-10 container mx-auto px-6 py-20 lg:py-32">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-8 border border-white/20">
-              <Zap className="w-4 h-4" />
-              <span className="text-sm font-medium">Powered by Cloudflare Workers AI</span>
+        <div className="relative z-10 flex-1 flex items-center justify-center px-6">
+          <div className="max-w-4xl text-center">
+            <div className="inline-flex items-center gap-2 bg-blue-600/10 backdrop-blur-sm px-4 py-2 rounded-full mb-8 border border-blue-500/20">
+              <Zap className="w-4 h-4 text-blue-400" />
+              <span className="text-sm font-medium text-blue-200">Powered by Cloudflare Workers AI</span>
             </div>
             
-            <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
-              Real-time AI Content Moderation
+            <h1 className="text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
+              Real-time AI Content<br />Moderation
             </h1>
             
-            <p className="text-xl lg:text-2xl mb-10 text-indigo-100 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed">
               Protect your platform with instant, intelligent content filtering. Built on Cloudflare's edge network for blazing-fast moderation at scale.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={onStartDemo}
-                className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
+                className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20"
               >
                 Launch Live Demo
               </button>
-              <a
-                href="#how-it-works"
-                className="bg-transparent border-2 border-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition"
+              <button
+                onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+                className="bg-transparent border-2 border-slate-600 px-8 py-4 rounded-lg font-semibold hover:bg-slate-800 hover:border-slate-500 transition-all"
               >
                 How It Works
-              </a>
-            </div>
-
-            <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
-              <div>
-                <div className="text-4xl font-bold mb-2">99.9%</div>
-                <div className="text-indigo-200 text-sm">Accuracy Rate</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold mb-2">&lt;100ms</div>
-                <div className="text-indigo-200 text-sm">Response Time</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold mb-2">24/7</div>
-                <div className="text-indigo-200 text-sm">Edge Coverage</div>
-              </div>
+              </button>
             </div>
           </div>
         </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gray-50 to-transparent"></div>
       </div>
 
       {/* How It Works */}
-      <div id="how-it-works" className="py-20 bg-white">
+      <div id="how-it-works" className="py-24 bg-slate-50">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">How ShieldFlow Works</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              A Cloudflare-native solution for real-time content moderation
+          <div className="text-center mb-20">
+            <h2 className="text-5xl font-bold text-slate-900 mb-4">How It Works</h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Three simple steps to protect your platform
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-8 rounded-2xl border border-indigo-100">
-              <div className="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mb-4">
-                <Lock className="w-6 h-6 text-white" />
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-blue-600/20">
+                <Lock className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">1. Integrate Our API</h3>
-              <p className="text-gray-600">
-                Add ShieldFlow to your platform with a simple API call. Each content submission is instantly analyzed before reaching your users.
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">1. Integrate API</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Add ShieldFlow to your platform with a simple API call. Each content submission is instantly analyzed.
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl border border-purple-100">
-              <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4">
-                <Zap className="w-6 h-6 text-white" />
+            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all">
+              <div className="w-14 h-14 bg-gradient-to-br from-cyan-600 to-cyan-500 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-cyan-600/20">
+                <Zap className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">2. AI Analysis</h3>
-              <p className="text-gray-600">
-                Our Llama 3.1 model running on Workers AI analyzes toxicity, hate speech, harassment, and other violations in milliseconds.
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">2. AI Analysis</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Our Llama 3.1 model analyzes toxicity, hate speech, and harassment in milliseconds.
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-pink-50 to-red-50 p-8 rounded-2xl border border-pink-100">
-              <div className="w-12 h-12 bg-pink-600 rounded-lg flex items-center justify-center mb-4">
-                <BarChart3 className="w-6 h-6 text-white" />
+            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-blue-600/20">
+                <BarChart3 className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">3. Get Results</h3>
-              <p className="text-gray-600">
-                Receive instant decisions (approved/flagged/rejected) with confidence scores and reasoning to inform your moderation workflow.
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">3. Get Results</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Receive instant decisions with toxicity scores to inform your moderation workflow.
               </p>
             </div>
           </div>
@@ -166,7 +151,7 @@ function LandingPage({ onStartDemo }) {
           <div className="mt-16 text-center">
             <button
               onClick={onStartDemo}
-              className="bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 transition shadow-lg"
+              className="bg-slate-900 text-white px-8 py-4 rounded-lg font-semibold hover:bg-slate-800 transition-all shadow-lg"
             >
               See It In Action →
             </button>
@@ -175,48 +160,57 @@ function LandingPage({ onStartDemo }) {
       </div>
 
       {/* Features */}
-      <div className="py-20 bg-gray-50">
+      <div className="py-24 bg-white">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Built on Cloudflare's Edge</h2>
-            <p className="text-xl text-gray-600">
-              Leveraging cutting-edge serverless technology
+          <div className="text-center mb-20">
+            <h2 className="text-5xl font-bold text-slate-900 mb-4">Built on Cloudflare's Edge</h2>
+            <p className="text-xl text-slate-600">
+              Enterprise-grade serverless infrastructure
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            <FeatureCard
-              icon="🤖"
-              title="Workers AI"
-              description="Llama 3.1 inference at the edge"
-            />
-            <FeatureCard
-              icon="🔄"
-              title="Durable Objects"
-              description="Stateful per-customer isolation"
-            />
-            <FeatureCard
-              icon="⚡"
-              title="Real-time WebSockets"
-              description="Live dashboard updates"
-            />
-            <FeatureCard
-              icon="🗄️"
-              title="KV Storage"
-              description="API key management"
-            />
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
+            <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-2xl border border-slate-200 hover:shadow-xl hover:border-blue-300 transition-all group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🤖</div>
+              <h3 className="font-bold text-slate-900 mb-2 text-lg">Workers AI</h3>
+              <p className="text-slate-600 text-sm">Llama inference at the edge</p>
+            </div>
+            
+            <div className="bg-gradient-to-br from-slate-50 to-cyan-50 p-8 rounded-2xl border border-slate-200 hover:shadow-xl hover:border-cyan-300 transition-all group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🔄</div>
+              <h3 className="font-bold text-slate-900 mb-2 text-lg">Durable Objects</h3>
+              <p className="text-slate-600 text-sm">Stateful per-customer isolation</p>
+            </div>
+            
+            <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-2xl border border-slate-200 hover:shadow-xl hover:border-blue-300 transition-all group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">⚡</div>
+              <h3 className="font-bold text-slate-900 mb-2 text-lg">Websockets</h3>
+              <p className="text-slate-600 text-sm">Live dashboard updates and Chat with AI</p>
+            </div>
+            
+            <div className="bg-gradient-to-br from-slate-50 to-cyan-50 p-8 rounded-2xl border border-slate-200 hover:shadow-xl hover:border-cyan-300 transition-all group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🗄️</div>
+              <h3 className="font-bold text-slate-900 mb-2 text-lg">Memory Persistence</h3>
+              <p className="text-slate-600 text-sm">Persistent memory for customer sessions</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-2xl border border-slate-200 hover:shadow-xl hover:border-blue-300 transition-all group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🌐</div>
+              <h3 className="font-bold text-slate-900 mb-2 text-lg">Cloudflare Pages</h3>
+              <p className="text-slate-600 text-sm">Static site hosting for the frontend</p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8">
+      <footer className="bg-slate-900 text-white py-12 border-t border-slate-800">
         <div className="container mx-auto px-6 text-center">
-          <div className="flex items-center justify-center gap-2 text-xl font-bold mb-2">
-            <Shield className="w-6 h-6" />
+          <div className="flex items-center justify-center gap-2 text-xl font-bold mb-3">
+            <Shield className="w-6 h-6 text-blue-400" />
             ShieldFlow
           </div>
-          <p className="text-gray-400 text-sm">
+          <p className="text-slate-400">
             Built for Cloudflare Internship Application • Demo Project
           </p>
         </div>
@@ -225,19 +219,9 @@ function LandingPage({ onStartDemo }) {
   );
 }
 
-function FeatureCard({ icon, title, description }) {
-  return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition">
-      <div className="text-4xl mb-3">{icon}</div>
-      <h3 className="font-bold text-gray-900 mb-2">{title}</h3>
-      <p className="text-gray-600 text-sm">{description}</p>
-    </div>
-  );
-}
-
 function SetupPage({ customerId, setCustomerId, isGenerating, onGenerate }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-purple-700 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
       <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-md w-full">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4">
@@ -291,6 +275,8 @@ function DemoPage({ apiKey, customerId, onBack }) {
   const [logs, setLogs] = useState([]);
   const [posts, setPosts] = useState([]);
   const [chatMessages, setChatMessages] = useState([]);
+  const [moderationModal, setModerationModal] = useState(null);
+
 
   // Form state
   const [author, setAuthor] = useState('Demo User');
@@ -310,6 +296,9 @@ function DemoPage({ apiKey, customerId, onBack }) {
       .then(res => res.json())
       .then(state => {
         setStats(state.stats);
+        if (state.aiContext?.length) {
+          setChatMessages(state.aiContext);
+        }
         if (state.moderationLogs?.length) {
           setLogs(state.moderationLogs.slice(0, 20));
         }
@@ -372,18 +361,10 @@ function DemoPage({ apiKey, customerId, onBack }) {
       return;
     }
 
-    const post = {
-      id: 'post-' + Date.now(),
-      author,
-      title,
-      content,
-      timestamp: Date.now(),
-      status: 'pending',
-      requestId: null,
-      score: null
-    };
-
-    setPosts(prev => [post, ...prev]);
+    const postData = { title, content, author };
+    
+    // Show checking modal
+    setModerationModal({ status: 'checking', title, content });
     setTitle('');
     setContent('');
 
@@ -395,22 +376,41 @@ function DemoPage({ apiKey, customerId, onBack }) {
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          text: `Title: ${title}. Content: ${content}`,
-          userId: author,
-          metadata: { postId: post.id }
+          text: `Title: ${postData.title}. Content: ${postData.content}`,
+          userId: postData.author,
+          metadata: { postId: 'post-' + Date.now() }
         })
       });
 
       const result = await response.json();
-      post.requestId = result.requestId;
-      post.status = result.decision;
-      post.score = result.score;
       
-      setPosts(prev => prev.map(p => p.id === post.id ? post : p));
+      // Show result modal
+      setModerationModal({ 
+        status: 'result', 
+        decision: result.decision,
+        score: result.score,
+        reasons: result.reasons,
+        title: postData.title,
+        content: postData.content
+      });
+
+      // Add to posts if approved or flagged
+      if (result.decision === 'approved' || result.decision === 'flagged') {
+        const post = {
+          id: 'post-' + Date.now(),
+          author: postData.author,
+          title: postData.title,
+          content: postData.content,
+          timestamp: Date.now(),
+          status: result.decision,
+          requestId: result.requestId,
+          score: result.score
+        };
+        setPosts(prev => [post, ...prev]);
+      }
     } catch (error) {
       console.error('Moderation failed:', error);
-      post.status = 'error';
-      setPosts(prev => prev.map(p => p.id === post.id ? post : p));
+      setModerationModal({ status: 'error', error: error.message });
     }
   };
 
@@ -425,7 +425,7 @@ function DemoPage({ apiKey, customerId, onBack }) {
   return (
     <div className="h-screen flex flex-col min-h-0">
       {/* Header */}
-      <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-4 shadow-lg">
+      <header className="bg-gradient-to-br from-gray-400 via-gray-500 to-gray-600 text-white px-6 py-4 shadow-lg">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shield className="w-7 h-7" />
@@ -464,7 +464,10 @@ function DemoPage({ apiKey, customerId, onBack }) {
             <div className="max-w-3xl mx-auto space-y-8">
               {/* Composer */}
               <div className="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 className="font-bold text-gray-900 mb-4">Write a New Post</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-gray-900">Write a New Post</h3>
+                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Quick Test Below ↓</span>
+                </div>
                 
                 <div className="space-y-4">
                   <div>
@@ -505,6 +508,62 @@ function DemoPage({ apiKey, customerId, onBack }) {
                   >
                     📤 Publish Post
                   </button>
+
+                  {/* Quick Test Buttons */}
+                  <div className="pt-4 border-t border-gray-200">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-xs font-semibold text-gray-600 uppercase">Quick Test Examples:</span>
+                      <span className="text-xs text-gray-400">(Click to auto-fill)</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => {
+                          setTitle("Amazing Product Review");
+                          setContent("I absolutely love this new feature! It's made my workflow so much easier and the team has been incredibly helpful. Highly recommended to everyone!");
+                        }}
+                        className="bg-green-50 border border-green-300 text-green-800 px-3 py-2 rounded-lg text-xs font-medium hover:bg-green-100 transition text-left"
+                      >
+                        ✅ <strong>Positive</strong>
+                        <div className="text-green-600 text-xs mt-0.5">Safe content</div>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          setTitle("My Thoughts on the Update");
+                          setContent("The new update has some interesting changes. I think there are both pros and cons. The interface looks cleaner but I'm still getting used to the new layout.");
+                        }}
+                        className="bg-blue-50 border border-blue-300 text-blue-800 px-3 py-2 rounded-lg text-xs font-medium hover:bg-blue-100 transition text-left"
+                      >
+                        ℹ️ <strong>Neutral</strong>
+                        <div className="text-blue-600 text-xs mt-0.5">Normal discussion</div>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          setTitle("Frustrated with Service");
+                          setContent("This is getting ridiculous. You idiots can't seem to do anything right. Every update breaks something and your support is utterly useless. What a joke!");
+                        }}
+                        className="bg-orange-50 border border-orange-300 text-orange-800 px-3 py-2 rounded-lg text-xs font-medium hover:bg-orange-100 transition text-left"
+                      >
+                        ⚠️ <strong>Toxic</strong>
+                        <div className="text-orange-600 text-xs mt-0.5">Hostile language</div>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          setTitle("You People Make Me Sick");
+                          setContent("I hate all of you. You're all worthless scum and deserve to suffer. I hope terrible things happen to everyone on your pathetic team. You disgust me.");
+                        }}
+                        className="bg-red-50 border border-red-300 text-red-800 px-3 py-2 rounded-lg text-xs font-medium hover:bg-red-100 transition text-left"
+                      >
+                        🚫 <strong>Aggressive</strong>
+                        <div className="text-red-600 text-xs mt-0.5">Severe violation</div>
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2 italic">
+                      💡 These are test examples to demonstrate ShieldFlow's moderation capabilities
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -604,13 +663,128 @@ function DemoPage({ apiKey, customerId, onBack }) {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+              
+      {/* Moderation Modal */}
+      {moderationModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative">
+            {moderationModal.status === 'checking' && (
+              <>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                    <Shield className="w-8 h-8 text-purple-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Checking Your Content</h3>
+                  <p className="text-gray-600 mb-6">ShieldFlow is analyzing your post for safety...</p>
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  </div>
+                </div>
+              </>
+            )}
+            
+            {moderationModal.status === 'result' && (
+              <>
+                {moderationModal.decision === 'approved' && (
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle className="w-8 h-8 text-green-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">✅ Post Approved!</h3>
+                    <p className="text-gray-600 mb-4">Your content passed moderation and is now live.</p>
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 text-left">
+                      <div className="text-sm text-green-800">
+                        <strong>Toxicity Score:</strong> {moderationModal.score.toFixed(3)}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setModerationModal(null)}
+                      className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+                    >
+                      Great!
+                    </button>
+                  </div>
+                )}
+                
+                {moderationModal.decision === 'flagged' && (
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <AlertTriangle className="w-8 h-8 text-yellow-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">⚠️ Post Flagged</h3>
+                    <p className="text-gray-600 mb-4">Your post has been published but flagged for review.</p>
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 text-left">
+                      <div className="text-sm text-yellow-800 mb-2">
+                        <strong>Toxicity Score:</strong> {moderationModal.score.toFixed(3)}
+                      </div>
+                      <div className="text-sm text-yellow-800">
+                        <strong>Reasons:</strong> {moderationModal.reasons.join(', ')}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setModerationModal(null)}
+                      className="w-full bg-yellow-600 text-white py-3 rounded-lg font-semibold hover:bg-yellow-700 transition"
+                    >
+                      I Understand
+                    </button>
+                  </div>
+                )}
+                
+                {moderationModal.decision === 'rejected' && (
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <XCircle className="w-8 h-8 text-red-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">❌ Post Rejected</h3>
+                    <p className="text-gray-600 mb-4">Your content violates our community guidelines and cannot be published.</p>
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-left">
+                      <div className="text-sm text-red-800 mb-2">
+                        <strong>Toxicity Score:</strong> {moderationModal.score.toFixed(3)}
+                      </div>
+                      <div className="text-sm text-red-800">
+                        <strong>Violations:</strong> {moderationModal.reasons.join(', ')}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setModerationModal(null)}
+                      className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition"
+                    >
+                      Close
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+            
+            {moderationModal.status === 'error' && (
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <XCircle className="w-8 h-8 text-gray-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Error</h3>
+                <p className="text-gray-600 mb-6">{moderationModal.error}</p>
+                <button
+                  onClick={() => setModerationModal(null)}
+                  className="w-full bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 transition"
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      
     </div>
   );
 }
 
 function BlogPost({ post }) {
   const statusConfig = {
+    moderating: { icon: '🔍', color: 'border-purple-400 bg-purple-50', badge: 'bg-purple-100 text-purple-800 animate-pulse' },
     pending: { icon: '⏳', color: 'border-blue-400 bg-blue-50', badge: 'bg-blue-100 text-blue-800' },
     approved: { icon: '✅', color: 'border-green-400 bg-green-50', badge: 'bg-green-100 text-green-800' },
     rejected: { icon: '❌', color: 'border-red-400 bg-red-50', badge: 'bg-red-100 text-red-800' },
@@ -623,7 +797,7 @@ function BlogPost({ post }) {
   return (
     <div className={`border-l-4 ${config.color} rounded-lg p-6 shadow-sm relative`}>
       <span className={`absolute top-4 right-4 ${config.badge} px-3 py-1 rounded-full text-xs font-bold uppercase`}>
-        {config.icon} {post.status}
+        {config.icon} {post.status === 'moderating' ? 'Checking...' : post.status}
       </span>
       
       <div className="mb-3 flex items-center justify-between pr-24">
