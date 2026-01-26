@@ -7,6 +7,7 @@ Real-time AI content moderation service built on Cloudflare's edge infrastructur
 ---
 
 ## Architecture
+```
 ┌─────────────────┐        ┌─────────────────┐
 │  Admin Client   │        │   API Client    │
 │  (Dashboard)    │        │ (Moderation)    │
@@ -38,6 +39,7 @@ Real-time AI content moderation service built on Cloudflare's edge infrastructur
     │ • Structured output   │    │ • Tool selection        │
     └───────────────────────┘    │ • Natural synthesis     │
                                  └─────────────────────────┘
+```
 ---
 
 ## API
