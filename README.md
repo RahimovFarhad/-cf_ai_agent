@@ -2,7 +2,24 @@
 
 Real-time AI content moderation service built on Cloudflare's edge infrastructure.
 
+**Brief Project Description:** Any Developer who has an api-key can add this service to their website, and use it as a text moderator. Whenever a user wants to share a text in the website, the developer should send the text to this service, and they will get a json response that will allow|flag|reject based on its toxicity.
+
 **Demo:** https://cf-ai-agent-f41.pages.dev
+
+## Demo Instructions
+
+1. Open the provided demo link.
+2. Click **Launch Live Demo**.
+3. Enter a **customer ID** (this will generate a memory-persistent demo API key).
+
+Once completed, the demo interface will open and is split into two sections:
+
+- **Left:** Demo social media application  
+- **Right:** Admin panel featuring:
+  - Moderation dashboard
+  - Chat section for admins to communicate with the agent about specific details
+    
+**Note that this is just an mvp demo. In a real-world application of this service, there will be only an admin board.**
 
 ---
 
